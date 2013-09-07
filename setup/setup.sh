@@ -26,4 +26,4 @@ cd ../py-bcrypt-0.4
 python setup.py install
 
 # Remove the setup directory
-../rm-rf setup/
+../../rm-rf setup/
