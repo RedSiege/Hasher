@@ -28,3 +28,6 @@ python setup.py install
 # Remove the directories
 rm -rf passlib-1.6.1
 rm -rf py-bcrypt-0.4
+
+# Remove the setup directory
+../rm-rf setup
