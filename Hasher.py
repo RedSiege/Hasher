@@ -17,7 +17,7 @@ def printTitle():
     print "##############################################################################\n"
  
 def printorCheck():
-    print "Hasher generates hashes, or compare a plaintext string with a hash."
+    print "Hasher generates hashes, or compares a plaintext string with a hash."
     print "Which would you like to do?\n"
     print "Menu Options: \n"
     print "1 - Generate Hash"
@@ -195,56 +195,59 @@ def compareMSDCC(hashchoice, stringprovided, mainhash):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
-printTitle()
-menuchoice = printorCheck()
-printTitle()
-hashchoice = supportedHashes()
-printTitle()
-stringprovided = getPlaintext(menuchoice)
-if hashchoice == "md5" or hashchoice == "sha1" or hashchoice == "sha256" or hashchoice == "sha512":
+def main():
     printTitle()
-    if menuchoice == "generate":
-        fullhash = generateHash(hashchoice, stringprovided)
-        print "The hashed value of \"" + stringprovided + "\" is:\n"
-        print fullhash
-    else:
-        mainhash = receiveHash()
-        compareStraightHash(hashchoice, stringprovided, mainhash)
-elif hashchoice == "md5_crypt":
+    menuchoice = printorCheck()
     printTitle()
-    if menuchoice == "generate":
-        fullhash = generateMD5CryptedHash(hashchoice, stringprovided)
-        print "The hashed value of \"" + stringprovided + "\" is:\n"
-        print fullhash
-    else:
-        mainhash = receiveHash()
-        compareHash(hashchoice, stringprovided, mainhash)
-elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt":
+    hashchoice = supportedHashes()
     printTitle()
-    if menuchoice == "generate":
-        fullhash = generateRoundedHashes(hashchoice, stringprovided)
-        print "The hashed value of \"" + stringprovided + "\" is:\n"
-        print fullhash
-    else:
-        mainhash = receiveHash()
-        compareHash(hashchoice, stringprovided, mainhash)
-elif hashchoice == "NTLM":
-    printTitle()
-    if menuchoice == "generate":
-        lmhash, nthash = generateNTLM(stringprovided)
-        print "The NTLM hash of \"" + stringprovided + "\" is:\n"
-        print "LM Hash: " + lmhash
-        print "NT Hash: " + nthash
-        print "NTLM : " + lmhash + ":" + nthash
-    else:
-        mainhash = receiveHash()
-        compareNTLM(hashchoice, stringprovided, mainhash)
-elif hashchoice == "msdcc" or hashchoice == "msdcc2":
-    if menuchoice == "generate":
+    stringprovided = getPlaintext(menuchoice)
+    if hashchoice == "md5" or hashchoice == "sha1" or hashchoice == "sha256" or hashchoice == "sha512":
         printTitle()
-        fullhash = generateMSDCC(hashchoice, stringprovided)
-        print "The hashed value of \"" + stringprovided + "\" is:\n"
-        print fullhash
-    else:
-        mainhash = receiveHash()
-        compareMSDCC(hashchoice, stringprovided, mainhash)
+        if menuchoice == "generate":
+            fullhash = generateHash(hashchoice, stringprovided)
+            print "The hashed value of \"" + stringprovided + "\" is:\n"
+            print fullhash
+        else:
+            mainhash = receiveHash()
+            compareStraightHash(hashchoice, stringprovided, mainhash)
+    elif hashchoice == "md5_crypt":
+        printTitle()
+        if menuchoice == "generate":
+            fullhash = generateMD5CryptedHash(hashchoice, stringprovided)
+            print "The hashed value of \"" + stringprovided + "\" is:\n"
+            print fullhash
+        else:
+            mainhash = receiveHash()
+            compareHash(hashchoice, stringprovided, mainhash)
+    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt":
+        printTitle()
+        if menuchoice == "generate":
+            fullhash = generateRoundedHashes(hashchoice, stringprovided)
+            print "The hashed value of \"" + stringprovided + "\" is:\n"
+            print fullhash
+        else:
+            mainhash = receiveHash()
+            compareHash(hashchoice, stringprovided, mainhash)
+    elif hashchoice == "NTLM":
+        printTitle()
+        if menuchoice == "generate":
+            lmhash, nthash = generateNTLM(stringprovided)
+            print "The NTLM hash of \"" + stringprovided + "\" is:\n"
+            print "LM Hash: " + lmhash
+            print "NT Hash: " + nthash
+            print "NTLM : " + lmhash + ":" + nthash
+        else:
+            mainhash = receiveHash()
+            compareNTLM(hashchoice, stringprovided, mainhash)
+    elif hashchoice == "msdcc" or hashchoice == "msdcc2":
+        if menuchoice == "generate":
+            printTitle()
+            fullhash = generateMSDCC(hashchoice, stringprovided)
+            print "The hashed value of \"" + stringprovided + "\" is:\n"
+            print fullhash
+        else:
+            mainhash = receiveHash()
+            compareMSDCC(hashchoice, stringprovided, mainhash)
+
+main()
