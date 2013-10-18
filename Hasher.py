@@ -30,7 +30,7 @@ def cliParser():
         hashalgo = args.type
         salt = args.salt
         rounds = args.rounds
-        username = args.username
+        msusername = args.username
 
         #Detect hash type for hash generation
         if hashalgo == "md5" or hashalgo == "sha1" or hashalgo == "sha256" or hashalgo == "sha512":
@@ -38,21 +38,59 @@ def cliParser():
             userhash.update(string)
             result = userhash.hexdigest()
             print result
+        elif hashalgo == "ntlm":
+            lmhash, nthash = generateNTLM(string)
+            print "The NTLM hash of \"" + string + "\" is:\n"
+            print "LM Hash: " + lmhash
+            print "NT Hash: " + nthash
+            print "NTLM : " + lmhash + ":" + nthash
+        elif hashalgo == "msdcc" or hashalgo == "msdcc2":
+            userhash = generateMSDCC(hashalgo, string, msusername)
+            print userhash
+        elif hashalgo == "md5_crypt":
+            if salt:
+                generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
+                print generatedhash
+            else:
+                generatedhash = getattr(hashes, hashalgo).encrypt(string)
+                print generatedhash
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt":
+            if salt:
+                if rounds:
+                    generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=rounds, salt=salt)
+                    print generatedhash
+                else:
+                    generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
+                    print generatedhash
+            else:
+                if rounds:
+                    generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=rounds)
+                    print generatedhash
+                else:
+                    generatedhash = getattr(hashes, hashalgo).encrypt(string)
+                    print generatedhash
         sys.exit()
 
     elif args.C:
         string = args.C
         hashalgo = args.type
-        cipherhash = args.hash
+        cipherhash = str(args.hash)
+        msusername = args.username
+
         if hashalgo == "md5" or hashalgo == "sha1" or hashalgo == "sha256" or hashalgo == "sha512":
             compareStraightHash(hashalgo, string, cipherhash)
         elif hashalgo == "ntlm":
             compareNTLM(hashalgo, string, cipherhash)
+        elif hashalgo == "msdcc" or hashalgo == "msdcc2":
+            compareMSDCC(hashalgo, string, cipherhash, msusername)
+        elif hashalgo == "md5_crypt":
+            print cipherhash
+            compareHash(hashalgo, string, cipherhash)
         sys.exit()
 
     elif args.list:
         print "Supported hashing algorithms are:\n"
-        print "md5, sha1, sha256, sha512, ntlm"
+        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt"
         sys.exit()
     
 
@@ -151,11 +189,6 @@ def receiveHash():
     print "Please provide the hash to use."
     receivedhash = raw_input("Hash: ")
     return receivedhash
-
-def receiveUsername():
-    print "Please provide the username you wish to use."
-    receivedusername = raw_input("Username: ")
-    return receivedusername
  
 def generateRoundedHashes(hashchoice, stringprovided):
     print "Do you want to provide the salt used for hashing?"
@@ -204,8 +237,7 @@ def generateNTLM(stringprovided):
     nthashed = hashes.nthash.encrypt(stringprovided)
     return (lmhashed, nthashed)
 
-def generateMSDCC(hashchoice, stringprovided):
-    msusername = receiveUsername()
+def generateMSDCC(hashchoice, stringprovided, msusername):
     generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, user=msusername)    
     return generatedhash
 
@@ -233,8 +265,7 @@ def compareStraightHash(hashchoice, stringprovided, mainhash):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
-def compareMSDCC(hashchoice, stringprovided, mainhash):
-    msusername = receiveUsername()
+def compareMSDCC(hashchoice, stringprovided, mainhash, username):
     verifiedhash = getattr(hashes, hashchoice).verify(stringprovided, mainhash, user=msusername)
     if verifiedhash == True:
         print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
@@ -289,8 +320,9 @@ def main():
     elif hashchoice == "msdcc" or hashchoice == "msdcc2":
         if menuchoice == "generate":
             printTitle()
-            fullhash = generateMSDCC(hashchoice, stringprovided)
-            print "The hashed value of \"" + stringprovided + "\" is:\n"
+            usernameinput = raw_input("What is the username?: ")
+            fullhash = generateMSDCC(hashchoice, stringprovided, usernameinput)
+            print "The hashed value of \"" + stringprovided + "\" and the username \"" + usernameinput + "\" is:\n"
             print fullhash
         else:
             mainhash = receiveHash()
