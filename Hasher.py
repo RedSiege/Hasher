@@ -9,7 +9,53 @@
 import os
 import passlib.hash as hashes
 import hashlib
- 
+import argparse
+import sys
+
+def cliParser():
+    parser = argparse.ArgumentParser(description="Create or Verify hashes with plaintext strings.")
+    parser.add_argument("-list", action="store_true", help="List all supported hash algorithms")
+    parser.add_argument("-G", metavar="Plaintext String", help="Generate a hash from the provided string.")
+    parser.add_argument("-C", metavar="Plaintext String", help="Compare provided plaintext with a hash")
+    parser.add_argument("-type", metavar="HASH_TYPE", help="The hashing algorithm you want to use")
+    parser.add_argument("-hash", metavar="HASH", help="Hash used for comparison")
+    parser.add_argument("-rounds", metavar="5000", help="Number of rounds to hash your plaintext string")
+    parser.add_argument("-salt", metavar="SALT", help="Salt used for hashing")
+    parser.add_argument("-username", metavar="USERNAME", help="Only required for select hash types")
+    args = parser.parse_args()
+
+    if args.G:
+        # Set our input flags to variables
+        string = args.G
+        hashalgo = args.type
+        salt = args.salt
+        rounds = args.rounds
+        username = args.username
+
+        #Detect hash type for hash generation
+        if hashalgo == "md5" or hashalgo == "sha1" or hashalgo == "sha256" or hashalgo == "sha512":
+            userhash = getattr(hashlib, hashalgo)()
+            userhash.update(string)
+            result = userhash.hexdigest()
+            print result
+        sys.exit()
+
+    elif args.C:
+        string = args.C
+        hashalgo = args.type
+        cipherhash = args.hash
+        if hashalgo == "md5" or hashalgo == "sha1" or hashalgo == "sha256" or hashalgo == "sha512":
+            compareStraightHash(hashalgo, string, cipherhash)
+        elif hashalgo == "ntlm":
+            compareNTLM(hashalgo, string, cipherhash)
+        sys.exit()
+
+    elif args.list:
+        print "Supported hashing algorithms are:\n"
+        print "md5, sha1, sha256, sha512, ntlm"
+        sys.exit()
+    
+
 def printTitle():
     os.system("clear")
     print "##############################################################################"
@@ -78,7 +124,7 @@ def supportedHashes():
     return hashselection
  
 def getPlaintext(menuchoice):
-    if menuchoice == "1":
+    if menuchoice == "generate":
         print "Please provide the plaintext string you want to hash\n"
     else:
         print "Please provide the plaintext string you wish to compare to a hash\n"
@@ -197,7 +243,7 @@ def compareMSDCC(hashchoice, stringprovided, mainhash):
 
 def main():
     printTitle()
-    menuchoice = printorCheck()
+    menuchoice = str(printorCheck())
     printTitle()
     hashchoice = supportedHashes()
     printTitle()
@@ -250,4 +296,5 @@ def main():
             mainhash = receiveHash()
             compareMSDCC(hashchoice, stringprovided, mainhash)
 
+cliParser()
 main()
