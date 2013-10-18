@@ -84,7 +84,6 @@ def cliParser():
         elif hashalgo == "msdcc" or hashalgo == "msdcc2":
             compareMSDCC(hashalgo, string, cipherhash, msusername)
         elif hashalgo == "md5_crypt":
-            print cipherhash
             compareHash(hashalgo, string, cipherhash)
         sys.exit()
 
