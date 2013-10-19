@@ -85,8 +85,9 @@ def cliParser():
             compareMSDCC(hashalgo, string, cipherhash, msusername)
         elif hashalgo == "md5_crypt":
             compareHash(hashalgo, string, cipherhash)
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt":
+            compareHash(hashalgo, string, cipherhash)
         sys.exit()
-
     elif args.list:
         print "Supported hashing algorithms are:\n"
         print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt"
