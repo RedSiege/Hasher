@@ -337,5 +337,8 @@ def main():
             mainhash = receiveHash()
             compareMSDCC(hashchoice, stringprovided, mainhash)
 
-cliParser()
-main()
+try:
+    cliParser()
+    main()
+except KeyboardInterrupt:
+    print "\n\nYou just rage quitted... :)"
