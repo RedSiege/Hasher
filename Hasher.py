@@ -45,8 +45,11 @@ def cliParser():
             print "NT Hash: " + nthash
             print "NTLM : " + lmhash + ":" + nthash
         elif hashalgo == "msdcc" or hashalgo == "msdcc2":
-            userhash = generateMSDCC(hashalgo, string, msusername)
-            print userhash
+            try:
+                userhash = generateMSDCC(hashalgo, string, msusername)
+                print userhash
+            except TypeError:
+                print "Error: A username is required for msdcc and msdcc2 hashes"
         elif hashalgo == "md5_crypt":
             if salt:
                 generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
@@ -57,15 +60,21 @@ def cliParser():
         elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt":
             if salt:
                 if rounds:
-                    generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=rounds, salt=salt)
-                    print generatedhash
+                    try:
+                        generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=int(rounds), salt=salt)
+                        print generatedhash
+                    except ValueError:
+                        print "Error: sha256_crypt requires at least 1000 rounds."
                 else:
                     generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
                     print generatedhash
             else:
                 if rounds:
-                    generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=rounds)
-                    print generatedhash
+                    try:
+                        generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=int(rounds))
+                        print generatedhash
+                    except ValueError:
+                        print "Error: sha256_crypt requires at least 1000 rounds."
                 else:
                     generatedhash = getattr(hashes, hashalgo).encrypt(string)
                     print generatedhash
