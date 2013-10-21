@@ -89,13 +89,27 @@ def cliParser():
         if hashalgo == "md5" or hashalgo == "sha1" or hashalgo == "sha256" or hashalgo == "sha512":
             compareStraightHash(hashalgo, string, cipherhash)
         elif hashalgo == "ntlm":
-            compareNTLM(hashalgo, string, cipherhash)
+            try:
+                compareNTLM(hashalgo, string, cipherhash)
+            except ValueError:
+                print "Error: You didn't provide a valid ntlm hash."
         elif hashalgo == "msdcc" or hashalgo == "msdcc2":
-            compareMSDCC(hashalgo, string, cipherhash, msusername)
+            try:
+                compareMSDCC(hashalgo, string, cipherhash, msusername)
+            except TypeError:
+                print "Error: You need to provide a username for this hash type."
+            except ValueError:
+                print "Error: You didn't provide a valid hash."
         elif hashalgo == "md5_crypt":
-            compareHash(hashalgo, string, cipherhash)
+            try:
+                compareHash(hashalgo, string, cipherhash)
+            except:
+                print "Error: You didn't provide a valid md5_crypt hash."
         elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt":
-            compareHash(hashalgo, string, cipherhash)
+            try:
+                compareHash(hashalgo, string, cipherhash)
+            except ValueError:
+                print "Error: You didn't provide a valid hash."
         sys.exit()
     elif args.list:
         print "Supported hashing algorithms are:\n"
@@ -275,7 +289,7 @@ def compareStraightHash(hashchoice, stringprovided, mainhash):
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
 def compareMSDCC(hashchoice, stringprovided, mainhash, username):
-    verifiedhash = getattr(hashes, hashchoice).verify(stringprovided, mainhash, user=msusername)
+    verifiedhash = getattr(hashes, hashchoice).verify(stringprovided, mainhash, user=username)
     if verifiedhash == True:
         print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
     else:
@@ -305,7 +319,10 @@ def main():
             print fullhash
         else:
             mainhash = receiveHash()
-            compareHash(hashchoice, stringprovided, mainhash)
+            try:
+                compareHash(hashchoice, stringprovided, mainhash)
+            except ValueError:
+                print "Error: You didn't provide a valid md5_crypt hash."
     elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt":
         printTitle()
         if menuchoice == "generate":
@@ -314,7 +331,10 @@ def main():
             print fullhash
         else:
             mainhash = receiveHash()
-            compareHash(hashchoice, stringprovided, mainhash)
+            try:
+                compareHash(hashchoice, stringprovided, mainhash)
+            except:
+                print "Error: You didn't provide a valid hash."
     elif hashchoice == "NTLM":
         printTitle()
         if menuchoice == "generate":
@@ -325,7 +345,10 @@ def main():
             print "NTLM : " + lmhash + ":" + nthash
         else:
             mainhash = receiveHash()
-            compareNTLM(hashchoice, stringprovided, mainhash)
+            try:
+                compareNTLM(hashchoice, stringprovided, mainhash)
+            except ValueError:
+                print "Error: You provided an invalid NTLM hash."
     elif hashchoice == "msdcc" or hashchoice == "msdcc2":
         if menuchoice == "generate":
             printTitle()
@@ -335,7 +358,13 @@ def main():
             print fullhash
         else:
             mainhash = receiveHash()
-            compareMSDCC(hashchoice, stringprovided, mainhash)
+            username = raw_input("What is the username associated with the hash: ")
+            if username == '':
+                print "\nWARNING: You didn't enter a username! This will impact the hash value!\n"
+            try:
+                compareMSDCC(hashchoice, stringprovided, mainhash, username)
+            except ValueError:
+                print "Error: You didn't provide a valid hash."
 
 try:
     cliParser()

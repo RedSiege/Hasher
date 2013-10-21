@@ -6,8 +6,8 @@
 apt-get install python-dev
 
 # Download the dependencies
-wget https://passlib.googlecode.com/files/passlib-1.6.1.tar.gz
-wget https://py-bcrypt.googlecode.com/files/py-bcrypt-0.4.tar.gz
+wget https://www.christophertruncer.com/InstallMe/passlib-1.6.1.tar.gz
+wget https://www.christophertruncer.com/InstallMe/py-bcrypt-0.4.tar.gz
 
 # Extract our files
 tar -zxvf passlib-1.6.1.tar.gz
