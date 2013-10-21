@@ -341,4 +341,4 @@ try:
     cliParser()
     main()
 except KeyboardInterrupt:
-    print "\n\nYou just rage quitted... :)"
+    print "\n\nRage quit!!!  :)"
