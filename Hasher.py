@@ -44,9 +44,9 @@ def cliParser():
             print "LM Hash: " + lmhash
             print "NT Hash: " + nthash
             print "NTLM : " + lmhash + ":" + nthash
-        elif hashalgo == "msdcc" or hashalgo == "msdcc2":
+        elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or hashalgo == "oracle10g":
             try:
-                userhash = generateMSDCC(hashalgo, string, msusername)
+                userhash = generateUsernameHash(hashalgo, string, msusername)
                 print userhash
             except TypeError:
                 print "Error: A username is required for msdcc and msdcc2 hashes"
@@ -57,7 +57,7 @@ def cliParser():
             else:
                 generatedhash = getattr(hashes, hashalgo).encrypt(string)
                 print generatedhash
-        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt":
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt":
             if salt:
                 if rounds:
                     try:
@@ -74,10 +74,16 @@ def cliParser():
                         generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=int(rounds))
                         print generatedhash
                     except ValueError:
-                        print "Error: sha256_crypt requires at least 1000 rounds."
+                        print "Error: sha256_crypt and sha512_crypt require at least 1000 rounds."
                 else:
                     generatedhash = getattr(hashes, hashalgo).encrypt(string)
                     print generatedhash
+        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11":
+            try:
+                generatedhash = generateEasyPasslibHash(hashalgo, string)
+                print generatedhash
+            except:
+                "Error - Please open a github issue letting me know about this error"
         sys.exit()
 
     elif args.C:
@@ -93,9 +99,9 @@ def cliParser():
                 compareNTLM(hashalgo, string, cipherhash)
             except ValueError:
                 print "Error: You didn't provide a valid ntlm hash."
-        elif hashalgo == "msdcc" or hashalgo == "msdcc2":
+        elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or "oracle10g":
             try:
-                compareMSDCC(hashalgo, string, cipherhash, msusername)
+                compareUsernameHash(hashalgo, string, cipherhash, msusername)
             except TypeError:
                 print "Error: You need to provide a username for this hash type."
             except ValueError:
@@ -105,22 +111,27 @@ def cliParser():
                 compareHash(hashalgo, string, cipherhash)
             except:
                 print "Error: You didn't provide a valid md5_crypt hash."
-        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt":
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt":
             try:
                 compareHash(hashalgo, string, cipherhash)
             except ValueError:
                 print "Error: You didn't provide a valid hash."
+        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11":
+            try:
+                compareEasyPasslibHash(hashalgo, string, cipherhash)
+            except:
+                print "Error - Please open a github issue letting me know about this error"
         sys.exit()
     elif args.list:
         print "Supported hashing algorithms are:\n"
-        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt"
+        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle11"
         sys.exit()
     
 
 def printTitle():
     os.system("clear")
     print "##############################################################################"
-    print "#                                Hasher v1.0                                 #"
+    print "#                                Hasher v1.0.1                                #"
     print "##############################################################################\n"
  
 def printorCheck():
@@ -147,7 +158,15 @@ def supportedHashes():
     print "7 - MS Domain Cached v2"
     print "8 - MD5 Crypt"
     print "9 - SHA1 Crypt"
-    print "10 - SHA256 Crypt\n"
+    print "10 - SHA256 Crypt"
+    print "11 - SHA512 Crypt"
+    print "12 - MSSQL 2000"
+    print "13 - MSSQL 2005"
+    print "14 - MYSQL v3.2.3"
+    print "15 - MYSQL v4.1"
+    print "16 - Oracle 10G"
+    print "17 - Oracle 11G"
+    print "18 - Postgresql MD5"
     print "Which hashing algorithm would you like to work with?"
     hashselection = raw_input("Option Number: ")
     if hashselection == "1":
@@ -179,6 +198,30 @@ def supportedHashes():
         return hashselection
     elif hashselection == "10":
         hashselection = "sha256_crypt"
+        return hashselection
+    elif hashselection == "11":
+        hashselection = "sha512_crypt"
+        return hashselection
+    elif hashselection == "12":
+        hashselection = "mssql2000"
+        return hashselection
+    elif hashselection == "13":
+        hashselection = "mssql2005"
+        return hashselection
+    elif hashselection == "14":
+        hashselection = "mysql323"
+        return hashselection
+    elif hashselection == "15":
+        hashselection = "mysql41"
+        return hashselection
+    elif hashselection == "16":
+        hashselection = "oracle10"
+        return hashselection
+    elif hashselection == "17":
+        hashselection = "oracle11"
+        return hashselection
+    elif hashselection == "18":
+        hashselection = "postgres_md5"
         return hashselection
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
@@ -260,7 +303,7 @@ def generateNTLM(stringprovided):
     nthashed = hashes.nthash.encrypt(stringprovided)
     return (lmhashed, nthashed)
 
-def generateMSDCC(hashchoice, stringprovided, msusername):
+def generateUsernameHash(hashchoice, stringprovided, msusername):
     generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, user=msusername)    
     return generatedhash
 
@@ -271,6 +314,7 @@ def compareHash(hashchoice, stringprovided, mainhash):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
+# Microsoft NTLM Hashes
 def compareNTLM(hashchoice, stringprovided, mainhash):
     verifiedlm = hashes.lmhash.verify(stringprovided, mainhash.split(":")[0])
     verifiednt = hashes.nthash.verify(stringprovided, mainhash.split(":")[1])
@@ -288,8 +332,22 @@ def compareStraightHash(hashchoice, stringprovided, mainhash):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
-def compareMSDCC(hashchoice, stringprovided, mainhash, username):
+# Microsoft Domain Cached Credential Hash function
+def compareUsernameHash(hashchoice, stringprovided, mainhash, username):
     verifiedhash = getattr(hashes, hashchoice).verify(stringprovided, mainhash, user=username)
+    if verifiedhash == True:
+        print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
+    else:
+        print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
+
+# Function for generating MSSQL, MYSQL, and Oracle 11G Database hashes
+def generateEasyPasslibHash(hashchoice, stringprovided):
+    hashedstring = getattr(hashes, hashchoice).encrypt(stringprovided)
+    return hashedstring
+
+# Function for comparing MSSQL, MYSQL, and Oracle 11G Database hashes
+def compareEasyPasslibHash(hashchoice, stringprovided, mainhash):
+    verifiedhash = getattr(hashes, hashchoice).verify(stringprovided, mainhash)
     if verifiedhash == True:
         print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
     else:
@@ -323,7 +381,7 @@ def main():
                 compareHash(hashchoice, stringprovided, mainhash)
             except ValueError:
                 print "Error: You didn't provide a valid md5_crypt hash."
-    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt":
+    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt" or hashchoice == "sha512_crypt":
         printTitle()
         if menuchoice == "generate":
             fullhash = generateRoundedHashes(hashchoice, stringprovided)
@@ -349,11 +407,11 @@ def main():
                 compareNTLM(hashchoice, stringprovided, mainhash)
             except ValueError:
                 print "Error: You provided an invalid NTLM hash."
-    elif hashchoice == "msdcc" or hashchoice == "msdcc2":
+    elif hashchoice == "msdcc" or hashchoice == "msdcc2" or hashchoice == "postgres_md5" or hashchoice == "oracle10":
         if menuchoice == "generate":
             printTitle()
             usernameinput = raw_input("What is the username?: ")
-            fullhash = generateMSDCC(hashchoice, stringprovided, usernameinput)
+            fullhash = generateUsernameHash(hashchoice, stringprovided, usernameinput)
             print "The hashed value of \"" + stringprovided + "\" and the username \"" + usernameinput + "\" is:\n"
             print fullhash
         else:
@@ -362,9 +420,22 @@ def main():
             if username == '':
                 print "\nWARNING: You didn't enter a username! This will impact the hash value!\n"
             try:
-                compareMSDCC(hashchoice, stringprovided, mainhash, username)
+                compareUsernameHash(hashchoice, stringprovided, mainhash, username)
             except ValueError:
                 print "Error: You didn't provide a valid hash."
+    elif hashchoice == "mssql2000" or hashchoice == "mssql2005" or hashchoice == "mysql323" or hashchoice == "mysql41" or hashchoice == "oracle11":
+        if menuchoice == "generate":
+            printTitle()
+            fullhash = generateEasyPasslibHash(hashchoice, stringprovided)
+            print "The hashed value of \"" + stringprovided + "\" is:\n"
+            print fullhash
+        else:
+            printTitle()
+            mainhash = receiveHash()
+            try:
+                compareEasyPasslibHash(hashchoice, stringprovided, mainhash)
+            except:
+                print "Error - Please open github issue letting me know about this error"
 
 try:
     cliParser()
