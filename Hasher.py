@@ -124,7 +124,7 @@ def cliParser():
         sys.exit()
     elif args.list:
         print "Supported hashing algorithms are:\n"
-        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle11"
+        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle10, oracle11, postgres_md5"
         sys.exit()
     
 
