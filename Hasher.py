@@ -57,14 +57,15 @@ def cliParser():
             else:
                 generatedhash = getattr(hashes, hashalgo).encrypt(string)
                 print generatedhash
-        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt":
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt" or hashalgo == "bcrypt":
             if salt:
                 if rounds:
                     try:
                         generatedhash = getattr(hashes, hashalgo).encrypt(string, rounds=int(rounds), salt=salt)
                         print generatedhash
                     except ValueError:
-                        print "Error: sha256_crypt requires at least 1000 rounds."
+                        print "Sha256_crypt and sha512_crypt require at least 1000 rounds."
+                        print "Bcrypt rounds must be between 4 and 31."
                 else:
                     generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
                     print generatedhash
@@ -99,6 +100,11 @@ def cliParser():
                 compareNTLM(hashalgo, string, cipherhash)
             except ValueError:
                 print "Error: You didn't provide a valid ntlm hash."
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt" or hashalgo == "bcrypt":
+            try:
+                compareHash(hashalgo, string, cipherhash)
+            except ValueError:
+                print "Error: You didn't provide a valid hash."
         elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or "oracle10g":
             try:
                 compareUsernameHash(hashalgo, string, cipherhash, msusername)
@@ -111,11 +117,6 @@ def cliParser():
                 compareHash(hashalgo, string, cipherhash)
             except:
                 print "Error: You didn't provide a valid md5_crypt hash."
-        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt":
-            try:
-                compareHash(hashalgo, string, cipherhash)
-            except ValueError:
-                print "Error: You didn't provide a valid hash."
         elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11":
             try:
                 compareEasyPasslibHash(hashalgo, string, cipherhash)
@@ -124,14 +125,14 @@ def cliParser():
         sys.exit()
     elif args.list:
         print "Supported hashing algorithms are:\n"
-        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle10, oracle11, postgres_md5"
+        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle10, oracle11, postgres_md5, bcrypt"
         sys.exit()
     
 
 def printTitle():
     os.system("clear")
     print "##############################################################################"
-    print "#                                Hasher v1.0.1                                #"
+    print "#                                Hasher v1.0.2                               #"
     print "##############################################################################\n"
  
 def printorCheck():
@@ -167,6 +168,7 @@ def supportedHashes():
     print "16 - Oracle 10G"
     print "17 - Oracle 11G"
     print "18 - Postgresql MD5"
+    print "19 - Bcrypt"
     print "Which hashing algorithm would you like to work with?"
     hashselection = raw_input("Option Number: ")
     if hashselection == "1":
@@ -223,6 +225,9 @@ def supportedHashes():
     elif hashselection == "18":
         hashselection = "postgres_md5"
         return hashselection
+    elif hashselection == "19":
+        hashselection = "bcrypt"
+        return hashselection
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
     return hashselection
@@ -265,10 +270,17 @@ def generateRoundedHashes(hashchoice, stringprovided):
         hashroundanswer = raw_input("[Y]es/[N]o: ")
         if hashroundanswer.lower() == "y" or hashroundanswer.lower() == "yes":
             rounders = roundGather()
-            generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, rounds=rounders, salt=saltvalue)
+            try:
+                generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, rounds=rounders, salt=saltvalue)
+            except ValueError:
+                print "Error: BCrypt requres a salt of 22 alphanumeric characters"
             return generatedhash
         else:
-            generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, salt=saltvalue)
+            try:
+                generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, salt=saltvalue)
+            except ValueError:
+                print "Error: BCrypt requres a salt of 22 alphanumeric characters"
+                sys.exit()
             return generatedhash
     else:
         print "Do you want to provide the number of hashing rounds to use?"
@@ -381,7 +393,7 @@ def main():
                 compareHash(hashchoice, stringprovided, mainhash)
             except ValueError:
                 print "Error: You didn't provide a valid md5_crypt hash."
-    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt" or hashchoice == "sha512_crypt":
+    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt" or hashchoice == "sha512_crypt" or hashchoice == "bcrypt":
         printTitle()
         if menuchoice == "generate":
             fullhash = generateRoundedHashes(hashchoice, stringprovided)

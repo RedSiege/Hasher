@@ -1,5 +1,9 @@
+[10.28.2013]
+    Released.: Hasher v1.0.2
+    Added....: Added support for bcrypt hashes
+
 [10.25.2013]
-    Releases.: Hasher v1.0.1
+    Released.: Hasher v1.0.1
     Added....: Added support for sha512_crypt, mssql2000, mssql2005, mysql v3.2.3, mysql v4.1, oracle10g, oracle11g, and postgres_md5
 
 [10.22.2013]
