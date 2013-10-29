@@ -44,12 +44,12 @@ def cliParser():
             print "LM Hash: " + lmhash
             print "NT Hash: " + nthash
             print "NTLM : " + lmhash + ":" + nthash
-        elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or hashalgo == "oracle10g":
+        elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or hashalgo == "oracle10g" or hashalgo == "cisco_pix":
             try:
                 userhash = generateUsernameHash(hashalgo, string, msusername)
                 print userhash
             except TypeError:
-                print "Error: A username is required for msdcc and msdcc2 hashes"
+                print "Error: A username is required for msdcc, msdcc2, postgres_md5, oracle10g, and cisco_pix hashes"
         elif hashalgo == "md5_crypt":
             if salt:
                 generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
@@ -79,7 +79,7 @@ def cliParser():
                 else:
                     generatedhash = getattr(hashes, hashalgo).encrypt(string)
                     print generatedhash
-        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11":
+        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11" or hashalgo == "cisco_type7":
             try:
                 generatedhash = generateEasyPasslibHash(hashalgo, string)
                 print generatedhash
@@ -100,12 +100,12 @@ def cliParser():
                 compareNTLM(hashalgo, string, cipherhash)
             except ValueError:
                 print "Error: You didn't provide a valid ntlm hash."
-        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt" or hashalgo == "bcrypt":
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt" or hashalgo == "bcrypt" or hashalgo == "cisco_type7":
             try:
                 compareHash(hashalgo, string, cipherhash)
             except ValueError:
                 print "Error: You didn't provide a valid hash."
-        elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or "oracle10g":
+        elif hashalgo == "msdcc" or hashalgo == "msdcc2" or hashalgo == "postgres_md5" or "oracle10g" or hashalgo == "cisco_pix":
             try:
                 compareUsernameHash(hashalgo, string, cipherhash, msusername)
             except TypeError:
@@ -169,6 +169,8 @@ def supportedHashes():
     print "17 - Oracle 11G"
     print "18 - Postgresql MD5"
     print "19 - Bcrypt"
+    print "20 - Cisco PIX (Type 5)"
+    print "21 - Cisco Type 7"
     print "Which hashing algorithm would you like to work with?"
     hashselection = raw_input("Option Number: ")
     if hashselection == "1":
@@ -227,6 +229,12 @@ def supportedHashes():
         return hashselection
     elif hashselection == "19":
         hashselection = "bcrypt"
+        return hashselection
+    elif hashselection == "20":
+        hashselection = "cisco_pix"
+        return hashselection
+    elif hashselection == "21":
+        hashselection = "cisco_type7"
         return hashselection
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
@@ -393,7 +401,7 @@ def main():
                 compareHash(hashchoice, stringprovided, mainhash)
             except ValueError:
                 print "Error: You didn't provide a valid md5_crypt hash."
-    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt" or hashchoice == "sha512_crypt" or hashchoice == "bcrypt":
+    elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt" or hashchoice == "sha512_crypt" or hashchoice == "bcrypt" or hashchoice == "cisco_type7":
         printTitle()
         if menuchoice == "generate":
             fullhash = generateRoundedHashes(hashchoice, stringprovided)
@@ -419,7 +427,7 @@ def main():
                 compareNTLM(hashchoice, stringprovided, mainhash)
             except ValueError:
                 print "Error: You provided an invalid NTLM hash."
-    elif hashchoice == "msdcc" or hashchoice == "msdcc2" or hashchoice == "postgres_md5" or hashchoice == "oracle10":
+    elif hashchoice == "msdcc" or hashchoice == "msdcc2" or hashchoice == "postgres_md5" or hashchoice == "oracle10" or hashchoice == "cisco_pix":
         if menuchoice == "generate":
             printTitle()
             usernameinput = raw_input("What is the username?: ")
@@ -435,7 +443,7 @@ def main():
                 compareUsernameHash(hashchoice, stringprovided, mainhash, username)
             except ValueError:
                 print "Error: You didn't provide a valid hash."
-    elif hashchoice == "mssql2000" or hashchoice == "mssql2005" or hashchoice == "mysql323" or hashchoice == "mysql41" or hashchoice == "oracle11":
+    elif hashchoice == "mssql2000" or hashchoice == "mssql2005" or hashchoice == "mysql323" or hashchoice == "mysql41" or hashchoice == "oracle11" or hashchoice == "cisco_type7":
         if menuchoice == "generate":
             printTitle()
             fullhash = generateEasyPasslibHash(hashchoice, stringprovided)

@@ -1,6 +1,6 @@
 [10.28.2013]
     Released.: Hasher v1.0.2
-    Added....: Added support for bcrypt hashes
+    Added....: Added support for bcrypt, cisco_pix (type 5), and cisco type 7 hashes
 
 [10.25.2013]
     Released.: Hasher v1.0.1
