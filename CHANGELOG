@@ -1,3 +1,10 @@
+[10.29.2013]
+    Released.: Hasher v1.0.3
+    Added....: Added support for ldap_md5, ldap_sha1, ldap_salted_md5, ldap_salted_sha1
+    Modified.: Menu appearance when loading menu driven Hasher
+    Modified.: Changed function name that was used for md5_crypt hashes
+    Modified.: Moved cisci_type7 hash type from wrong function into the correct one
+
 [10.28.2013]
     Released.: Hasher v1.0.2
     Added....: Added support for bcrypt, cisco_pix (type 5), and cisco type 7 hashes

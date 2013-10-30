@@ -50,10 +50,13 @@ def cliParser():
                 print userhash
             except TypeError:
                 print "Error: A username is required for msdcc, msdcc2, postgres_md5, oracle10g, and cisco_pix hashes"
-        elif hashalgo == "md5_crypt":
+        elif hashalgo == "md5_crypt" or hashalgo == "ldap_salted_md5" or hashalgo == "ldap_salted_sha1":
             if salt:
-                generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
-                print generatedhash
+                try:
+                    generatedhash = getattr(hashes, hashalgo).encrypt(string, salt=salt)
+                    print generatedhash
+                except ValueError:
+                    print "Error: Salt size not correct. ldap_salted_md5/sha1 need salt of 4-16 characters"
             else:
                 generatedhash = getattr(hashes, hashalgo).encrypt(string)
                 print generatedhash
@@ -79,7 +82,7 @@ def cliParser():
                 else:
                     generatedhash = getattr(hashes, hashalgo).encrypt(string)
                     print generatedhash
-        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11" or hashalgo == "cisco_type7":
+        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11" or hashalgo == "cisco_type7" or hashalgo == "ldap_md5" or hashalgo == "ldap_sha1":
             try:
                 generatedhash = generateEasyPasslibHash(hashalgo, string)
                 print generatedhash
@@ -95,12 +98,17 @@ def cliParser():
 
         if hashalgo == "md5" or hashalgo == "sha1" or hashalgo == "sha256" or hashalgo == "sha512":
             compareStraightHash(hashalgo, string, cipherhash)
+        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11" or hashalgo == "cisco_type7" or hashalgo == "ldap_md5" or hashalgo == "ldap_sha1":
+            try:
+                compareEasyPasslibHash(hashalgo, string, cipherhash)
+            except:
+                print "Error - Please open a github issue letting me know about this error"
         elif hashalgo == "ntlm":
             try:
                 compareNTLM(hashalgo, string, cipherhash)
             except ValueError:
                 print "Error: You didn't provide a valid ntlm hash."
-        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt" or hashalgo == "bcrypt" or hashalgo == "cisco_type7":
+        elif hashalgo == "sha1_crypt" or hashalgo == "sha256_crypt" or hashalgo == "sha512_crypt" or hashalgo == "bcrypt":
             try:
                 compareHash(hashalgo, string, cipherhash)
             except ValueError:
@@ -112,27 +120,24 @@ def cliParser():
                 print "Error: You need to provide a username for this hash type."
             except ValueError:
                 print "Error: You didn't provide a valid hash."
-        elif hashalgo == "md5_crypt":
+        elif hashalgo == "md5_crypt" or hashalgo == "ldap_salted_md5" or hashalgo == "ldap_salted_sha1":
             try:
                 compareHash(hashalgo, string, cipherhash)
+            except ValueError:
+                print "Error: Salt size not correct.  Ldap_salted_md5/sha1 need salt of 4-16 characters"
             except:
                 print "Error: You didn't provide a valid md5_crypt hash."
-        elif hashalgo == "mssql2000" or hashalgo == "mssql2005" or hashalgo == "mysql323" or hashalgo == "mysql41" or hashalgo == "oracle11":
-            try:
-                compareEasyPasslibHash(hashalgo, string, cipherhash)
-            except:
-                print "Error - Please open a github issue letting me know about this error"
         sys.exit()
     elif args.list:
         print "Supported hashing algorithms are:\n"
-        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle10, oracle11, postgres_md5, bcrypt"
+        print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle10, oracle11, postgres_md5, bcrypt, cisco_pix, cisco_type7, ldap_md5, ldap_salted_md5, ldap_sha1, ldap_salted_sha1"
         sys.exit()
     
 
 def printTitle():
     os.system("clear")
     print "##############################################################################"
-    print "#                                Hasher v1.0.2                               #"
+    print "#                                Hasher v1.0.3                               #"
     print "##############################################################################\n"
  
 def printorCheck():
@@ -150,27 +155,21 @@ def printorCheck():
  
 def supportedHashes():
     print "The following is a list of hashing algorithms Hasher currently supports:\n"
-    print "1 - MD5"
-    print "2 - SHA1"
-    print "3 - SHA256"
-    print "4 - SHA512"
-    print "5 - NTLM"
-    print "6 - MS Domain Cached"
-    print "7 - MS Domain Cached v2"
-    print "8 - MD5 Crypt"
-    print "9 - SHA1 Crypt"
-    print "10 - SHA256 Crypt"
+    print "1 - MD5\t\t\t\t16 - Oracle 10G"
+    print "2 - SHA1\t\t\t17 - Oracle11G"
+    print "3 - SHA256\t\t\t18 - Postgresql MD5"
+    print "4 - SHA512\t\t\t19 - Bcrypt"
+    print "5 - NTLM\t\t\t20 - Cisco PIX (Type 5)"
+    print "6 - MS Domain Cached\t\t21 - Cisco Type 7"
+    print "7 - MS Domain Cached v2\t\t22 - LDAP MD5"
+    print "8 - MD5 Crypt\t\t\t23 - LDAP Salted MD5"
+    print "9 - SHA1 Crypt\t\t\t24 - LDAP SHA1"
+    print "10 - SHA256 Crypt\t\t25 - LDAP Salted SHA1"
     print "11 - SHA512 Crypt"
     print "12 - MSSQL 2000"
     print "13 - MSSQL 2005"
     print "14 - MYSQL v3.2.3"
-    print "15 - MYSQL v4.1"
-    print "16 - Oracle 10G"
-    print "17 - Oracle 11G"
-    print "18 - Postgresql MD5"
-    print "19 - Bcrypt"
-    print "20 - Cisco PIX (Type 5)"
-    print "21 - Cisco Type 7"
+    print "15 - MYSQL v4.1\n"
     print "Which hashing algorithm would you like to work with?"
     hashselection = raw_input("Option Number: ")
     if hashselection == "1":
@@ -235,6 +234,18 @@ def supportedHashes():
         return hashselection
     elif hashselection == "21":
         hashselection = "cisco_type7"
+        return hashselection
+    elif hashselection == "22":
+        hashselection = "ldap_md5"
+        return hashselection
+    elif hashselection == "23":
+        hashselection = "ldap_salted_md5"
+        return hashselection
+    elif hashselection == "24":
+        hashselection = "ldap_sha1"
+        return hashselection
+    elif hashselection == "25":
+        hashselection = "ldap_salted_sha1"
         return hashselection
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
@@ -301,7 +312,7 @@ def generateRoundedHashes(hashchoice, stringprovided):
             generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided)
             return generatedhash
 
-def generateMD5CryptedHash(hashchoice, stringprovided):
+def generateCryptedorSaltedHash(hashchoice, stringprovided):
     print "Do you want to provide the salt used for hashing?"
     saltanswer = raw_input("[Y]es/[N]o: ")
     if saltanswer.lower() == "y" or saltanswer.lower() == "yes":
@@ -389,10 +400,10 @@ def main():
         else:
             mainhash = receiveHash()
             compareStraightHash(hashchoice, stringprovided, mainhash)
-    elif hashchoice == "md5_crypt":
+    elif hashchoice == "md5_crypt" or hashchoice == "ldap_salted_md5" or hashchoice == "ldap_salted_sha1":
         printTitle()
         if menuchoice == "generate":
-            fullhash = generateMD5CryptedHash(hashchoice, stringprovided)
+            fullhash = generateCryptedorSaltedHash(hashchoice, stringprovided)
             print "The hashed value of \"" + stringprovided + "\" is:\n"
             print fullhash
         else:
@@ -400,7 +411,7 @@ def main():
             try:
                 compareHash(hashchoice, stringprovided, mainhash)
             except ValueError:
-                print "Error: You didn't provide a valid md5_crypt hash."
+                print "Error: You didn't provide a valid hash."
     elif hashchoice == "sha1_crypt" or hashchoice == "sha256_crypt" or hashchoice == "sha512_crypt" or hashchoice == "bcrypt" or hashchoice == "cisco_type7":
         printTitle()
         if menuchoice == "generate":
@@ -443,7 +454,7 @@ def main():
                 compareUsernameHash(hashchoice, stringprovided, mainhash, username)
             except ValueError:
                 print "Error: You didn't provide a valid hash."
-    elif hashchoice == "mssql2000" or hashchoice == "mssql2005" or hashchoice == "mysql323" or hashchoice == "mysql41" or hashchoice == "oracle11" or hashchoice == "cisco_type7":
+    elif hashchoice == "mssql2000" or hashchoice == "mssql2005" or hashchoice == "mysql323" or hashchoice == "mysql41" or hashchoice == "oracle11" or hashchoice == "cisco_type7" or hashchoice == "ldap_md5" or hashchoice == "ldap_sha1":
         if menuchoice == "generate":
             printTitle()
             fullhash = generateEasyPasslibHash(hashchoice, stringprovided)
