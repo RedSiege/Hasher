@@ -168,7 +168,7 @@ def supportedHashes():
     print "11 - SHA512 Crypt"
     print "12 - MSSQL 2000"
     print "13 - MSSQL 2005"
-    print "14 - MYSQL v3.2.3"
+    print "14 - MYSQL v3.2.3\t\t99 - Exit Hasher"
     print "15 - MYSQL v4.1\n"
     print "Which hashing algorithm would you like to work with?"
     hashselection = raw_input("Option Number: ")
@@ -247,6 +247,8 @@ def supportedHashes():
     elif hashselection == "25":
         hashselection = "ldap_salted_sha1"
         return hashselection
+    elif hashselection == "99":
+        sys.exit("Thanks for trying Hasher!")
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
     return hashselection
