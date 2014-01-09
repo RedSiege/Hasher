@@ -1,3 +1,7 @@
+[01.09.2014]
+    Released.: Hasher v1.0.4
+    Added....: Added an exit function within Hasher's menu
+
 [10.29.2013]
     Released.: Hasher v1.0.3
     Added....: Added support for ldap_md5, ldap_sha1, ldap_salted_md5, ldap_salted_sha1
