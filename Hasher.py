@@ -248,7 +248,7 @@ def supportedHashes():
         hashselection = "ldap_salted_sha1"
         return hashselection
     elif hashselection == "99":
-        sys.exit("Thanks for trying Hasher!")
+        sys.exit("\nThanks for using Hasher!")
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
     return hashselection
