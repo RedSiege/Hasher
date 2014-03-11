@@ -18,6 +18,7 @@ pip install -r requirements.txt
 
 Use:
 It's menu driven, if you have questions, just ask me
+
 There are also command line options that can be shown with the -h or --help flag
 ```
 ./Hasher.py --help
