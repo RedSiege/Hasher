@@ -12,7 +12,8 @@ Alternatively, you can use Pip/Virtualenv.
 ```
 # Create a virtualenv (e.g. venv)
 virtualenv venv
-# Install the requirements
+# Activate the environment and install the requirements
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
