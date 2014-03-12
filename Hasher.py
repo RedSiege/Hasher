@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
  
 # Hashing Script which generates hashes from plaintext strings, and allows you to
 # compare a string with a hash to determine if you have the correct cleartext string

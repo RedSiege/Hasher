@@ -8,5 +8,19 @@ Install:
 Run the setup.sh script (./setup.sh)
 The setup script installs two python libraries that hasher invokes (passlib and py-bcrypt).
 
+Alternatively, you can use Pip/Virtualenv.
+```
+# Create a virtualenv (e.g. venv)
+virtualenv venv
+# Activate the environment and install the requirements
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
 Use:
 It's menu driven, if you have questions, just ask me
+
+There are also command line options that can be shown with the -h or --help flag
+```
+./Hasher.py --help
+```
