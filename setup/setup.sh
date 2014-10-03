@@ -24,7 +24,3 @@ python setup.py install
 # move out of passlib and instal py-bcrypt
 cd ../py-bcrypt-0.4
 python setup.py install
-
-# Remove the setup directory
-cd ../..
-rm -rf setup
