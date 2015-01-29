@@ -1,16 +1,17 @@
 #!/usr/bin/env python
- 
+
 # Hashing Script which generates hashes from plaintext strings, and allows you to
 # compare a string with a hash to determine if you have the correct cleartext string
 
 # Author: Christopher Truncer
 # Thanks for the help with stupid errors I couldn't solve from those who don't want to be named!
- 
+
 import os
 import passlib.hash as hashes
 import hashlib
 import argparse
 import sys
+
 
 def cliParser():
     parser = argparse.ArgumentParser(description="Create or Verify hashes with plaintext strings.")
@@ -132,14 +133,15 @@ def cliParser():
         print "Supported hashing algorithms are:\n"
         print "md5, sha1, sha256, sha512, ntlm, msdcc, msdcc2, md5_crypt, sha1_crypt, sha256_crypt, sha512_crypt, mssql2000, mssql2005, mysql323, mysql41, oracle10, oracle11, postgres_md5, bcrypt, cisco_pix, cisco_type7, ldap_md5, ldap_salted_md5, ldap_sha1, ldap_salted_sha1"
         sys.exit()
-    
+
 
 def printTitle():
     os.system("clear")
     print "##############################################################################"
     print "#                                Hasher v1.0.4                               #"
     print "##############################################################################\n"
- 
+
+
 def printorCheck():
     print "Hasher generates hashes, or compares a plaintext string with a hash."
     print "Which would you like to do?\n"
@@ -152,7 +154,8 @@ def printorCheck():
     else:
         functionselection = "compare"
     return functionselection
- 
+
+
 def supportedHashes():
     print "The following is a list of hashing algorithms Hasher currently supports:\n"
     print "1 - MD5\t\t\t\t16 - Oracle 10G"
@@ -252,7 +255,8 @@ def supportedHashes():
     else:
         "This will now error because you didn't provide a valid selection, and I didn't implement error checking yet"
     return hashselection
- 
+
+
 def getPlaintext(menuchoice):
     if menuchoice == "generate":
         print "Please provide the plaintext string you want to hash\n"
@@ -260,11 +264,13 @@ def getPlaintext(menuchoice):
         print "Please provide the plaintext string you wish to compare to a hash\n"
     userstring = raw_input("Plaintext String: ")
     return userstring
- 
+
+
 def getHash():
     print "Please provide the hash you want to compare with your plaintext string"
     userhash = raw_input("Hash: ")
     return userhash
+
 
 def roundGather():
     print "How many rounds of hashing would you like?"
@@ -272,16 +278,19 @@ def roundGather():
     rounds = int(rounds)
     return rounds
 
+
 def receiveSalt():
     print "Please provide the salt."
     saltvalue = raw_input("Salt: ")
     return saltvalue
 
+
 def receiveHash():
     print "Please provide the hash to use."
     receivedhash = raw_input("Hash: ")
     return receivedhash
- 
+
+
 def generateRoundedHashes(hashchoice, stringprovided):
     print "Do you want to provide the salt used for hashing?"
     saltanswer = raw_input("[Y]es/[N]o: ")
@@ -314,6 +323,7 @@ def generateRoundedHashes(hashchoice, stringprovided):
             generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided)
             return generatedhash
 
+
 def generateCryptedorSaltedHash(hashchoice, stringprovided):
     print "Do you want to provide the salt used for hashing?"
     saltanswer = raw_input("[Y]es/[N]o: ")
@@ -325,20 +335,24 @@ def generateCryptedorSaltedHash(hashchoice, stringprovided):
         generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided)
         return generatedhash
 
+
 def generateHash(hashchoice, stringprovided):
     stringhashed = getattr(hashlib, hashchoice)()
     stringhashed.update(stringprovided)
     result = stringhashed.hexdigest()
     return result
 
+
 def generateNTLM(stringprovided):
     lmhashed = hashes.lmhash.encrypt(stringprovided)
     nthashed = hashes.nthash.encrypt(stringprovided)
     return (lmhashed, nthashed)
 
+
 def generateUsernameHash(hashchoice, stringprovided, msusername):
     generatedhash = getattr(hashes, hashchoice).encrypt(stringprovided, user=msusername)    
     return generatedhash
+
 
 def compareHash(hashchoice, stringprovided, mainhash):
     verified = getattr(hashes, hashchoice).verify(stringprovided, mainhash)
@@ -347,14 +361,21 @@ def compareHash(hashchoice, stringprovided, mainhash):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
+
 # Microsoft NTLM Hashes
 def compareNTLM(hashchoice, stringprovided, mainhash):
-    verifiedlm = hashes.lmhash.verify(stringprovided, mainhash.split(":")[0])
-    verifiednt = hashes.nthash.verify(stringprovided, mainhash.split(":")[1])
-    if verifiedlm == True and verifiednt == True:
-        print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
-    else:
-        print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
+    try:
+        verifiedlm = hashes.lmhash.verify(stringprovided, mainhash.split(":")[0])
+        verifiednt = hashes.nthash.verify(stringprovided, mainhash.split(":")[1])
+        if verifiedlm == True and verifiednt == True:
+            print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
+        else:
+            print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
+    except IndexError:
+        print "[*] Error: You need to provide the full NTLM hash."
+        print "[*] Error: Please re-run with full hash."
+        print "[*] Error: Eg. hash 01fc5a6be7bc6929aad3b435b51404ee:0cb6948805f797bf2a82807973b89537"
+        sys.exit()
 
 def compareStraightHash(hashchoice, stringprovided, mainhash):
     hashedstring = getattr(hashlib, hashchoice)()
@@ -365,6 +386,7 @@ def compareStraightHash(hashchoice, stringprovided, mainhash):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
+
 # Microsoft Domain Cached Credential Hash function
 def compareUsernameHash(hashchoice, stringprovided, mainhash, username):
     verifiedhash = getattr(hashes, hashchoice).verify(stringprovided, mainhash, user=username)
@@ -373,10 +395,12 @@ def compareUsernameHash(hashchoice, stringprovided, mainhash, username):
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
 
+
 # Function for generating MSSQL, MYSQL, and Oracle 11G Database hashes
 def generateEasyPasslibHash(hashchoice, stringprovided):
     hashedstring = getattr(hashes, hashchoice).encrypt(stringprovided)
     return hashedstring
+
 
 # Function for comparing MSSQL, MYSQL, and Oracle 11G Database hashes
 def compareEasyPasslibHash(hashchoice, stringprovided, mainhash):
@@ -385,6 +409,7 @@ def compareEasyPasslibHash(hashchoice, stringprovided, mainhash):
         print "TRUE - The hash \"" + mainhash + "\" and \"" + stringprovided + "\" match!"
     else:
         print "FALSE - The hash \"" + mainhash + "\" and plaintext \"" + stringprovided + "\" do not match!"
+
 
 def main():
     printTitle()
