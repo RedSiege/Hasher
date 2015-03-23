@@ -78,8 +78,15 @@ class Conductor:
         # Iterates over all loaded hash_op modules, finds the hash type
         # generates the digest, and returns it
         if cli_args.G:
+            if cli_args.hash_type.lower().strip() == "all":
+                print "Plaintext string : " + helpers.color(cli_args.plaintext)
             for path, hash_obj in self.hashing_algorithms.iteritems():
-                if cli_args.hash_type.lower().strip() == hash_obj.hash_type.lower():
+
+                if cli_args.hash_type.lower().strip() == "all":
+                    hashed_string = hash_obj.generate(cli_args)
+                    print hash_obj.hash_type + " hash : " + helpers.color(hashed_string)
+
+                elif cli_args.hash_type.lower().strip() == hash_obj.hash_type.lower():
                     hashed_string = hash_obj.generate(cli_args)
                     print "Hash Type        : " + helpers.color(cli_args.hash_type)
                     print "Plaintext string : " + helpers.color(cli_args.plaintext)
