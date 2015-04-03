@@ -32,9 +32,9 @@ class Conductor:
         parser.add_argument("--hash-type", metavar="md5", default=None, help="The hashing algorithm you want to use")
         parser.add_argument("--plaintext", metavar="password", default=None, help="Plaintext string to hash")
         parser.add_argument("--hash", metavar="HASH", default=None, help="Hash used for comparison")
-        parser.add_argument("--rounds", metavar="5000", help="Number of rounds to hash your plaintext string")
-        parser.add_argument("--salt", metavar="SALT", help="Salt used for hashing")
-        parser.add_argument("--username", metavar="USERNAME", help="Only required for select hash types")
+        parser.add_argument("--rounds", metavar="5000", default=False, type=int, help="Number of rounds to hash your plaintext string")
+        parser.add_argument("--salt", metavar="SALT", default=False, help="Salt used for hashing")
+        parser.add_argument("--username", metavar="USERNAME", default=None, help="Only required for select hash types")
         args = parser.parse_args()
         if not args.G and not args.C and not args.list:
             print helpers.color("\n\n[*] Error: You must provide an action to perform", warning=True)
