@@ -1,8 +1,7 @@
 '''
-This module generates md5 hashes
+This module generates msdcc2 hashes
 '''
 
-import sys
 from passlib.hash import msdcc2
 
 
@@ -15,6 +14,6 @@ class Algorithm:
     def generate(self, cli_object):
         if cli_object.username is None:
             print "You must provide a username for msdcc hashes!"
-            sys.exit()
+            return "<Needs username>"
         generatedhash = msdcc2.encrypt(cli_object.plaintext, user=cli_object.username)
         return generatedhash

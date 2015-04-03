@@ -1,5 +1,5 @@
 '''
-This module generates md5 hashes
+This module generates cisco_pix hashes
 '''
 
 from passlib.hash import cisco_pix
@@ -12,5 +12,8 @@ class Algorithm:
         self.description = "This module generates cisco_pix hashes"
 
     def generate(self, cli_object):
+        if cli_object.username is None:
+            print "You must provide a username for cisco_pix hashes!"
+            return "<Needs username>"
         generatedhash = cisco_pix.encrypt(cli_object.plaintext, user=cli_object.username)    
         return generatedhash
