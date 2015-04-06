@@ -15,6 +15,6 @@ class Algorithm:
     def generate(self, cli_object):
         if cli_object.username is None:
             print "You must provide a username for msdcc hashes!"
-            sys.exit()
+            return "MSDCC hashes require a username"
         generatedhash = msdcc.encrypt(cli_object.plaintext, user=cli_object.username)    
         return generatedhash

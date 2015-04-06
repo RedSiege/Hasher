@@ -13,7 +13,7 @@ class Algorithm:
 
     def generate(self, cli_object):
         if cli_object.username is None:
-            print "You must provide a username for msdcc hashes!"
-            return "<Needs username>"
+            print "You must provide a username for msdcc2 hashes!"
+            return "MSDCC2 Hashes require a username"
         generatedhash = msdcc2.encrypt(cli_object.plaintext, user=cli_object.username)
         return generatedhash

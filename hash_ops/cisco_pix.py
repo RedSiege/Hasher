@@ -14,6 +14,6 @@ class Algorithm:
     def generate(self, cli_object):
         if cli_object.username is None:
             print "You must provide a username for cisco_pix hashes!"
-            return "<Needs username>"
+            return "Cisco_pix hashes require a username"
         generatedhash = cisco_pix.encrypt(cli_object.plaintext, user=cli_object.username)    
         return generatedhash
