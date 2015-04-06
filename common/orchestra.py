@@ -93,12 +93,17 @@ class Conductor:
                     print "Digest Value     : " + helpers.color(hashed_string)
 
         if cli_args.C:
+            found_hash = False
             for path, hash_obj in self.hashing_algorithms.iteritems():
                 if cli_args.hash_type.lower().strip() == hash_obj.hash_type.lower():
                     hashed_string = hash_obj.generate(cli_args)
+                    found_hash = True
                     if hashed_string == cli_args.hash.lower().strip():
                         print helpers.color("True - The hash " + cli_args.hash + " and plaintext " + cli_args.plaintext + " match!")
                     else:
                         print helpers.color("False - The hash " + cli_args.hash + " and plaintext " + cli_args.plaintext + " do not match!", warning=True)
+            if not found_hash:
+                print helpers.color("[*] Error: You did not provide a valid hash-type to compare!", warning=True)
+                print helpers.color("[*] Error: Please re-run with a valid hash-type.", warning=True)
 
         return
