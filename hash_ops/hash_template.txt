@@ -1,0 +1,15 @@
+'''
+This is a template for a hash algorithm
+'''
+
+
+class Algorithm:
+
+    def __init__(self):
+        self.hash_type = "hash_type"
+        self.description = "Description of module"
+
+    def generate(self, cli_object):
+
+        # Return the hash
+        return hash_value
