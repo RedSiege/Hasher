@@ -7,7 +7,7 @@ import glob
 import imp
 import sys
 from common import helpers
-from hash_ops import *
+from hashes.ops import *
 
 
 class Conductor:
@@ -54,7 +54,7 @@ class Conductor:
         return args
 
     def load_hash_operations(self):
-        for name in glob.glob('hash_ops/*.py'):
+        for name in glob.glob('hashes/ops/*.py'):
             if name.endswith(".py") and ("__init__" not in name):
                 loaded_algo = imp.load_source(
                     name.replace("/", ".").rstrip('.py'), name)
