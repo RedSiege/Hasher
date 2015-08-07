@@ -5,8 +5,8 @@ This is an update to Hasher, something I wrote a long time ago.
 Ideally this will make it easier to use, and to add new hashtypes.
 '''
 
-from common import helpers
-from common import orchestra
+from hashes.common import helpers
+from hashes.common import orchestra
 
 
 def main():

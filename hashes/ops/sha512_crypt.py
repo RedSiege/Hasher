@@ -2,7 +2,7 @@
 This module generates sha512_crypt hashes
 '''
 
-from common import helpers
+from hashes.common import helpers
 from passlib.hash import sha512_crypt
 
 

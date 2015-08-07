@@ -6,7 +6,7 @@ import argparse
 import glob
 import imp
 import sys
-from common import helpers
+from hashes.common import helpers
 from hashes.ops import *
 
 
