@@ -7,7 +7,60 @@ import glob
 import imp
 import sys
 from hashes.common import helpers
-from hashes.ops import *
+import hashes.ops.bcrypt
+import hashes.ops.cisco_pix
+import hashes.ops.cisco_type7
+import hashes.ops.ldap_md5
+import hashes.ops.ldap_salted_md5
+import hashes.ops.ldap_salted_sha1
+import hashes.ops.ldap_sha1
+import hashes.ops.md5_crypt
+import hashes.ops.md5
+import hashes.ops.msdcc2
+import hashes.ops.msdcc
+import hashes.ops.mssql2000
+import hashes.ops.mssql2005
+import hashes.ops.mysql323
+import hashes.ops.mysql41
+import hashes.ops.nt
+import hashes.ops.oracle10
+import hashes.ops.oracle11
+import hashes.ops.postgres_md5
+import hashes.ops.sha1_crypt
+import hashes.ops.sha1
+import hashes.ops.sha256_crypt
+import hashes.ops.sha256
+import hashes.ops.sha512_crypt
+import hashes.ops.sha512
+
+
+_OPS_ALGORITHMS = [
+    hashes.ops.bcrypt.Algorithm,
+    hashes.ops.cisco_pix.Algorithm,
+    hashes.ops.cisco_type7.Algorithm,
+    hashes.ops.ldap_md5.Algorithm,
+    hashes.ops.ldap_salted_md5.Algorithm,
+    hashes.ops.ldap_salted_sha1.Algorithm,
+    hashes.ops.ldap_sha1.Algorithm,
+    hashes.ops.md5_crypt.Algorithm,
+    hashes.ops.md5.Algorithm,
+    hashes.ops.msdcc2.Algorithm,
+    hashes.ops.msdcc.Algorithm,
+    hashes.ops.mssql2000.Algorithm,
+    hashes.ops.mssql2005.Algorithm,
+    hashes.ops.mysql323.Algorithm,
+    hashes.ops.mysql41.Algorithm,
+    hashes.ops.nt.Algorithm,
+    hashes.ops.oracle10.Algorithm,
+    hashes.ops.oracle11.Algorithm,
+    hashes.ops.postgres_md5.Algorithm,
+    hashes.ops.sha1_crypt.Algorithm,
+    hashes.ops.sha1.Algorithm,
+    hashes.ops.sha256_crypt.Algorithm,
+    hashes.ops.sha256.Algorithm,
+    hashes.ops.sha512_crypt.Algorithm,
+    hashes.ops.sha512.Algorithm,
+    ]
 
 
 class Conductor:
@@ -54,12 +107,9 @@ class Conductor:
         return args
 
     def load_hash_operations(self):
-        for name in glob.glob('hashes/ops/*.py'):
-            if name.endswith(".py") and ("__init__" not in name):
-                loaded_algo = imp.load_source(
-                    name.replace("/", ".").rstrip('.py'), name)
-                self.hashing_algorithms[name] = loaded_algo.Algorithm()
-        return
+        for algorithm_callable in _OPS_ALGORITHMS:
+            algorithm = algorithm_callable()
+            self.hashing_algorithms[algorithm.hash_type] = algorithm
 
     def menu_system(self):
 
