@@ -2,7 +2,7 @@
 This module generates sha256_crypt hashes
 '''
 
-from common import helpers
+from hashes.common import helpers
 from passlib.hash import sha256_crypt
 
 

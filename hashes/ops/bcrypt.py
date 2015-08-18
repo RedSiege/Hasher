@@ -3,7 +3,7 @@ This module generates bcrypt hashes
 '''
 
 import sys
-from common import helpers
+from hashes.common import helpers
 import passlib.hash as hashes
 
 

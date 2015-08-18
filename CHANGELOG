@@ -1,3 +1,12 @@
+[xx.xx.2015]
+    Released.: Hashes v1.1.0
+    Modified.: Renamed project from Hasher to Hashes to avoid a name clash on PyPI
+    Modified.: Renamed `common` package to `hashes.common`
+    Modified.: Renamed `hash_ops` package to `hashes.ops`
+    Modified.: Renamed `Hasher.py` script to `hashes.__main__.py, now automatically installed into the PATH
+    Removed..: Removed `setup.sh`, replaced by `setup.py`
+    Removed..: Removed `requirements.txt`, replaced by `setup.py`
+
 [01.09.2014]
     Released.: Hasher v1.0.4
     Added....: Added an exit function within Hasher's menu
