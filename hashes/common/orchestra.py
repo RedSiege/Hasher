@@ -96,7 +96,7 @@ class Conductor:
             sys.exit()
 
         if args.G and (args.plaintext is None or args.hash_type is None) :
-            print helpers.color("\n\n[*] Error: You must provde a plaintext string and hashing algorithm to use!", warning=True)
+            print helpers.color("\n\n[*] Error: You must provide a plaintext string and hashing algorithm to use!", warning=True)
             print helpers.color("[*] Please re-run and provide a plaintext string and/or hash algorithm.", warning=True)
             sys.exit()
 
